@@ -28,3 +28,11 @@ func NewClient(conn *websocket.Conn, manager *Manager) *Client {
 		timer:      *time.NewTimer(time.Second * 20),
 	}
 }
+
+func (c *Client) readMessages() {
+
+}
+
+func (c *Client) writeMessages() {
+
+}
