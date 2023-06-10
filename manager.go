@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"net/http"
@@ -79,6 +80,33 @@ func (m *Manager) addClient(client *Client) {
 	defer m.Unlock()
 
 	m.clients[client] = "@" + getNewToken(64)
+}
+
+func (m *Manager) isStreamer(c *Client) bool {
+	m.Lock()
+	defer m.Unlock()
+
+	if _, ok := m.streamers[c]; ok {
+		return true
+	}
+	return false
+}
+
+func (m *Manager) getRandomStreamer() (*Client, error) {
+	m.Lock()
+	defer m.Unlock()
+
+	if len(m.streamers) == 0 {
+		return nil, errors.New("No streamers")
+	}
+	k := rand.Intn(len(m.streamers))
+	for usr := range m.streamers {
+		if k == 0 {
+			return usr, nil
+		}
+		k--
+	}
+	return nil, errors.New("Func error")
 }
 
 func (m *Manager) removeClient(client *Client) {
