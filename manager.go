@@ -82,6 +82,34 @@ func (m *Manager) addClient(client *Client) {
 	m.clients[client] = "@" + getNewToken(64)
 }
 
+func (m *Manager) upgradeUserToStreamer(client *Client, username string, info string) {
+	m.Lock()
+	defer m.Unlock()
+
+	client.timer.Stop()
+	m.clients[client] = username
+	m.streamers[client] = info
+}
+
+func (m *Manager) getClientUsername(client *Client) string {
+	m.Lock()
+	defer m.Unlock()
+
+	return m.clients[client]
+}
+
+func (m *Manager) getClientFromUsername(username string) (*Client, error) {
+	m.Lock()
+	defer m.Unlock()
+
+	for k, v := range m.clients {
+		if v == username {
+			return k, nil
+		}
+	}
+	return nil, errors.New("No user found")
+}
+
 func (m *Manager) isStreamer(c *Client) bool {
 	m.Lock()
 	defer m.Unlock()
