@@ -50,6 +50,12 @@ func requestStreamers(c *Client, info string) bool {
 			c.egress <- []byte("<CK>Error no streamers")
 			// return false
 		}
+	} else {
+		if streamer, err := c.manager.getClientFromUsername(info); err == nil {
+			streamer.egress <- []byte("R\n" + username)
+		} else {
+			c.egress <- []byte("<CK>Error streamer does not exist")
+		}
 	}
 	return true
 }
