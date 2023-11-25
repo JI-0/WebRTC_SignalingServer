@@ -12,12 +12,17 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", manager.serveWS)
 
-	srv := &http.Server{
+	srv0 := &http.Server{
 		Addr:    ":3000",
 		Handler: mux,
 	}
+	srv1 := &http.Server{
+		Addr:    ":3001",
+		Handler: mux,
+	}
 
-	log.Fatal(srv.ListenAndServe())
+	go log.Fatal(srv0.ListenAndServe())
+	log.Fatal(srv1.ListenAndServe())
 
 	println("Shutting down signaling server")
 }
